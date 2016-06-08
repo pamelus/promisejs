@@ -166,7 +166,20 @@
                 var err = (!xhr.status ||
                            (xhr.status < 200 || xhr.status >= 300) &&
                            xhr.status !== 304);
-                p.done(err, xhr.responseText, xhr);
+                var response = xhr.responseText;
+
+                // If Accept header was set to application/json
+                // the decode the JSON automatically.
+                for(var h in headers) {
+                    if (headers.hasOwnProperty(h)) {
+                        if (h.toLowerCase() === 'accept' && headers[h] === "application/json") {
+                            response = JSON.parse(response);
+                            break;
+                        }
+                    }
+                }
+
+                p.done(err, response, xhr);
             }
         };
 
